@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
-function App() {
+// import NotActive from './components/500/NotActive';
+
+import { AuthProvider } from './components/authentication/Auth';
+import ProtectedRoute from "./components/authentication/ProtectedRoute";
+
+import EditorView from "./views/EditorView";
+import AuthView from './views/AuthView';
+import ProfileView from './views/ProfileView'
+import Darkmode from './components/Darkmode';
+
+import { isDarkThemePrefered } from './config/base';
+
+const App = () => {
+  document.querySelector('body').setAttribute('theme', isDarkThemePrefered ? 'dark' : 'light')
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    // <div className='App'>
+    //   <NotActive />
+    // </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="App"> 
+          <Darkmode />
+          <Routes>                                                                        
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <EditorView />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/signin" element={<AuthView/>}/>
+            <Route path="/signup" element={<AuthView/>}/>
+            <Route path=":username" element={<ProfileView />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

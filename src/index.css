@@ -11,3 +11,272 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+:root {
+  --primary-background: rgb(238, 215, 197);
+  --transperant-background: rgba(255,255,255,0.07);
+  --primary-color: rgb(56, 61, 59);
+  --primary-border: solid 1px rgba(0,0,0,0.07);
+  --primary-link-color: rgb(75, 143, 140);
+  --primary-border-radius: 8pt
+}
+
+body[theme='dark'] {
+  --primary-background: #272727;
+  --transperant-background: rgba(255,255,255,0.03);
+  --primary-color: #ffffff;
+  --primary-link-color: #0aa7bc;
+  --primary-border: solid 1px rgba(255,255,255,0.03);
+}
+
+body {
+  margin: 0;
+  background: var(--primary-background);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--primary-color);
+}
+
+a {
+  color: var(--primary-link-color);
+}
+
+button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.App {
+  /* display: grid; */
+  /* grid-template-columns: 1fr 2fr; */
+  position: absolute;
+  min-height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16pt;
+  margin: 16pt auto;
+  max-width: 900pt;
+  padding: 0 6pt;
+}
+
+.editor-container {
+  margin: 0 auto;
+  width: -webkit-fill-available;
+  padding: 16pt 24pt;
+  border-radius: var(--primary-border-radius);
+  background-color: var(--transperant-background);
+  border: var(--primary-border);
+
+}
+
+.editor-input {
+  outline: none;
+}
+
+.main_sidebar {
+  display: none;
+  width: 48pt;
+  height: 100%;
+  background: var(--transperant-background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-right: var(--primary-border);
+}
+
+#main {
+  grid-column: 1 / span 2;
+  height: 100vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.darkmode_btn {
+  position: absolute;
+  bottom: 16pt;
+  right: 16pt;
+}
+
+.actions {
+  position: absolute;
+  top: 16pt;
+  right: 16pt;
+}
+
+.icon.manage {
+  background: url(https://www.svgrepo.com/show/523734/settings.svg);
+  color: var(--primary-color);
+  display: block;
+  width: 32pt;
+  height: 32pt;
+  background-size: contain;
+}
+
+.profile_info {
+  width: min-content;
+}
+
+.profile_picture {
+  width: 256pt;
+  height: 256pt;
+  object-fit: cover;
+  border: var(--primary-border);
+  border-radius: 50%;
+  margin: 0 32pt;
+}
+
+.profile_link {
+  cursor: pointer;
+}
+
+.profile_link.username {
+  opacity: 1;
+}
+
+.community_info {
+  display: inline-flex;
+  column-gap: 6pt;
+}
+
+.auth_block {
+  max-width: 512pt;
+  width: 100%;
+}
+
+.auth_form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12pt;
+  background: var(--transperant-background);
+  border: var(--primary-border);
+  border-radius: var(--primary-border-radius);
+  padding: 24pt;
+}
+
+.form_field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form_field label {
+  font-weight: 500;
+  font-size: 18pt;
+  margin-bottom: 6pt;
+}
+
+.form_field input {
+  border-radius: var(--primary-border-radius);
+  border: var(--primary-border);
+  background: var(--transperant-background)!important;
+  padding: 8pt 12pt;
+  font-size: 14pt;
+  color: var(--primary-color);
+}
+
+.form_field input::placeholder {
+  opacity: 0.5;
+}
+
+.left_section {
+  grid-column: 1;
+}
+
+.right_section {
+  grid-column: 1 / span 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signout_btn {
+  position: absolute;
+  top: 12pt;
+  left: 12pt;
+}
+
+.editor_info_block {
+  display: inline-flex;
+  column-gap: 12pt;
+  flex-wrap: wrap;
+}
+
+.editor_info {
+  font-family: 'Courier New', Courier, monospace;
+  opacity: 0.5;
+}
+
+.profileview {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  margin-top: 64pt;
+}
+
+.profileview .profile_info {
+  grid-column: 1;
+}
+
+.profileview .blog {
+  grid-column: 2;
+}
+
+.profileview section {
+  min-height: 100%;
+  margin: auto;
+}
+
+.dropmenu {
+  height: 0;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.profileimage {
+  height: fit-content;
+  width: fit-content;
+}
+
+.profileimage img {
+  width: 32pt;
+  height: 32pt;
+  object-fit: fill;
+}
+
+.profileimage:hover .dropmenu {
+  height: fit-content;
+}
+
+.authcontrol {
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+}
+
+@media screen and (max-width: 768pt) {
+  .editor-container {
+    padding: 12pt 12pt;
+  }
+
+  .editor-container h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5em;
+    margin: 0;
+  }
+
+  .editor-container ul, p {
+    margin: 0.2em 0;
+  }
+}

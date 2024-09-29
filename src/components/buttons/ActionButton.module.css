@@ -1,0 +1,8 @@
+@import url(../../index.css);
+
+.ActionButton {
+    background-color: var(--primary-link-color);
+    padding: 8pt 16pt;
+    border-radius: var(--primary-border-radius);
+    color: var(--primary-background);
+}

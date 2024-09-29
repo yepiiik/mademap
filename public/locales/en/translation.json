@@ -1,0 +1,9 @@
+{
+    "global": {
+        "name": "Mademap",
+        "info_page": "yepiiik.web.app"  
+    },
+    "500": {
+        "dev": "The application is currently under development"
+    }
+  }
