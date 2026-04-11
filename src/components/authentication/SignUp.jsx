@@ -1,114 +1,133 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { authController } from '../../config/base';
-import ActionButton from '../buttons/ActionButton';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
+
+const GoogleIcon = () => (
+  <svg
+    role="img"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    className="mr-2 h-4 w-4"
+    fill="currentColor"
+  >
+    <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.908 3.152-1.928 4.172-1.224 1.224-3.136 2.552-6.712 2.552-5.44 0-9.76-4.4-9.76-9.84s4.32-9.84 9.76-9.84c2.96 0 5.12 1.168 6.712 2.664l2.304-2.304C18.216 1.496 15.56 0 12.48 0 6.904 0 2.25 4.512 2.25 10.08s4.654 10.08 10.23 10.08c3.016 0 5.28-.984 7.048-2.816 1.816-1.816 2.384-4.416 2.384-6.504 0-.624-.048-1.216-.144-1.76H12.48z" />
+  </svg>
+);
 
 const Signup = () => {
     const navigate = useNavigate();
-
-    const [email, setEmail] = useState('')
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const onSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        if (password !== repeatPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+        setIsLoading(true);
         authController.signUp(email, password, repeatPassword)
-        .then((userCredential) => {
-            // Signed in
-            const user = userCredential.user;
-            navigate("/")
-            console.log(user);
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
-        });
+            .then((userCredential) => {
+                navigate("/");
+            })
+            .catch((error) => {
+                console.error(error.code, error.message);
+            })
+            .finally(() => setIsLoading(false));
     }
 
     const onLoginUsingGoogle = (e) => {
         e.preventDefault();
-        console.log(e)
+        setIsLoading(true);
         authController.signInWithGoogle()
-        .then((userCredential) => {
-            // Signed in
-            const user = userCredential.user;
-            navigate("/")
-            console.log(user);
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
-        });
+            .then((userCredential) => {
+                navigate("/");
+            })
+            .catch((error) => {
+                console.error(error.code, error.message);
+            })
+            .finally(() => setIsLoading(false));
     }
 
-  return (
-    <div className="auth_block">                     
-        <form className="auth_form">                                              
-            <div className="form_field">
-                <label htmlFor="email-address">
-                    Email address
-                </label>
-                <input
-                    id="email-address"
-                    name="email"
-                    type="email"                                    
-                    required                                                                                
-                    placeholder="example@google.com"
-                    onChange={(e)=>setEmail(e.target.value)}
-                />
-            </div>
-
-            <div className="form_field">
-                <label htmlFor="create password">
-                    Password
-                </label>
-                <input
-                    type="password"
-                    label="create password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required
-                    placeholder="••••••••••"
-                />
-            </div>
-
-            <div className="form_field">
-                <label htmlFor="repeat password">
-                    Repeat password
-                </label>
-                <input
-                    type="password"
-                    label="repeat password"
-                    value={repeatPassword}
-                    onChange={(e) => setRepeatPassword(e.target.value)} 
-                    required
-                    placeholder="••••••••••"
-                />
-            </div>
-
-            <div>
-                <ActionButton onClick={onSubmit}>
-                    Create Account
-                </ActionButton>
-            </div>
-            <div>
-                <ActionButton onClick={onLoginUsingGoogle}>
-                    Login with Google
-                </ActionButton>
-            </div>                               
-        </form>
-
-        <span>
-            Already have account? {' '}
-            <NavLink to="/signin">
-                Sign in
-            </NavLink>
-        </span>
-
-    </div>
-  )
+    return (
+        <Card className="w-full max-w-md mx-auto bg-[var(--transperant-background)] border-[var(--primary-border)] shadow-none">
+            <CardHeader className="space-y-1">
+                <CardTitle className="text-2xl font-bold text-[var(--primary-color)] text-center">Create an account</CardTitle>
+                <CardDescription className="text-center text-muted-foreground">
+                    Enter your email below to create your account
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <form onSubmit={onSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-[var(--primary-color)]">Email</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="m@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="bg-transparent border-[var(--primary-border)] text-[var(--primary-color)] focus-visible:ring-secondary/50"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="password" title="Password" className="text-[var(--primary-color)]">Password</Label>
+                        <Input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="bg-transparent border-[var(--primary-border)] text-[var(--primary-color)] focus-visible:ring-secondary/50"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="repeatPassword" title="Repeat password" className="text-[var(--primary-color)]">Repeat Password</Label>
+                        <Input
+                            id="repeatPassword"
+                            type="password"
+                            value={repeatPassword}
+                            onChange={(e) => setRepeatPassword(e.target.value)}
+                            required
+                            className="bg-transparent border-[var(--primary-border)] text-[var(--primary-color)] focus-visible:ring-secondary/50"
+                        />
+                    </div>
+                    <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90 text-white" disabled={isLoading}>
+                        {isLoading ? "Creating account..." : "Create Account"}
+                    </Button>
+                </form>
+                
+                <div className="space-y-4 pt-2">
+                    <div className="flex flex-col items-center">
+                        <span className="text-xs uppercase text-muted-foreground font-medium">Or sign in with</span>
+                    </div>
+                    <Button 
+                        variant="outline" 
+                        type="button" 
+                        className="w-full border-[var(--primary-border)] bg-transparent text-[var(--primary-color)] hover:bg-secondary/10" 
+                        onClick={onLoginUsingGoogle}
+                        disabled={isLoading}
+                    >
+                        <GoogleIcon />
+                        Google
+                    </Button>
+                </div>
+            </CardContent>
+            <CardFooter className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
+                Already have an account?{" "}
+                <NavLink to="/signin" className="text-secondary hover:underline font-medium">
+                    Sign in
+                </NavLink>
+            </CardFooter>
+        </Card>
+    );
 }
 
-export default Signup
+export default Signup;

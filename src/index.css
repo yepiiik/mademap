@@ -1,10 +1,108 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 25 48% 85%; /* Bridge to rgb(238, 215, 197) */
+    --foreground: 158 4% 23%; /* Bridge to rgb(56, 61, 59) */
+
+    --card: 0 0% 100% / 0.07;
+    --card-foreground: 158 4% 23%;
+
+    --popover: 25 48% 85%;
+    --popover-foreground: 158 4% 23%;
+
+    --primary: 158 4% 23%;
+    --primary-foreground: 25 48% 95%;
+
+    --secondary: 177 31% 43%; /* Bridge to rgb(75, 143, 140) */
+    --secondary-foreground: 25 48% 95%;
+
+    --muted: 158 4% 23% / 0.1;
+    --muted-foreground: 158 4% 23% / 0.6;
+
+    --accent: 177 31% 43% / 0.1;
+    --accent-foreground: 177 31% 43%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 158 4% 23% / 0.07;
+    --input: 158 4% 23% / 0.07;
+    --ring: 177 31% 43%;
+
+    --radius: 8pt;
+  }
+
+  .dark, body[theme='dark'] {
+    --background: 0 0% 15%; /* Bridge to #272727 */
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 100% / 0.03;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 15%;
+
+    --secondary: 189 90% 39%; /* Bridge to #0aa7bc */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 100% / 0.1;
+    --muted-foreground: 0 0% 100% / 0.6;
+
+    --accent: 189 90% 39% / 0.1;
+    --accent-foreground: 189 90% 39%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 100% / 0.03;
+    --input: 0 0% 100% / 0.03;
+    --ring: 189 90% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .editor-heading-h1 { @apply text-4xl font-bold mb-4; }
+  .editor-heading-h2 { @apply text-3xl font-bold mb-3; }
+  .editor-heading-h3 { @apply text-2xl font-bold mb-2; }
+  .editor-heading-h4 { @apply text-xl font-bold mb-2; }
+  .editor-heading-h5 { @apply text-lg font-bold mb-1; }
+  .editor-list-ol { @apply list-decimal ml-6 mb-4; }
+  .editor-list-ul { @apply list-disc ml-6 mb-4; }
+  .editor-listitem { @apply mb-1; }
+  .editor-quote { @apply border-l-4 border-muted pl-4 italic mb-4; }
+  .editor-text-bold { @apply font-bold; }
+  .editor-text-italic { @apply italic; }
+  .editor-text-underline { @apply underline; }
+  .editor-text-strikethrough { @apply line-through; }
+  .editor-text-code { @apply bg-muted px-1 rounded font-mono text-sm; }
+  .editor-code { @apply bg-muted p-4 rounded-md font-mono text-sm block mb-4 overflow-x-auto; }
+  .editor-link { @apply text-secondary hover:underline cursor-pointer; }
+  
+  .editor-placeholder {
+    @apply text-muted-foreground absolute top-[16pt] left-[24pt] pointer-events-none;
+  }
 }
 
 code {
@@ -27,15 +125,6 @@ body[theme='dark'] {
   --primary-color: #ffffff;
   --primary-link-color: #0aa7bc;
   --primary-border: solid 1px rgba(255,255,255,0.03);
-}
-
-body {
-  margin: 0;
-  background: var(--primary-background);
-  font-weight: 500;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--primary-color);
 }
 
 a {

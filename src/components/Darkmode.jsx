@@ -5,7 +5,13 @@ function Darkmode() {
   const [darkmode, setDarkmode] = useState(isDarkThemePrefered)
 
   useEffect(() => {
-    document.querySelector('body').setAttribute('theme', darkmode ? 'dark' : 'light')
+    const body = document.querySelector('body');
+    body.setAttribute('theme', darkmode ? 'dark' : 'light');
+    if (darkmode) {
+      body.classList.add('dark');
+    } else {
+      body.classList.remove('dark');
+    }
     console.log(darkmode)
   }, [darkmode])
 

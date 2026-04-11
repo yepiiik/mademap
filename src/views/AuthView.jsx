@@ -7,29 +7,19 @@ import { useLocation } from 'react-router-dom';
 
 
 function AuthView() {
-    const {currentUser} = useContext(AuthContext);
     const location = useLocation();
-    // console.dir(location)
 
     return (
-        <>
-            {/* <section className='left_section'>
-                <h2>Your accounts</h2>
-                <div className='accounts_list'>
-                    { currentUser ? <li><span>{currentUser.email}</span><SignOut /></li> : ''}
-                </div>
-            </section> */}
-
-            <section className='right_section'>
+        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+            <div className="w-full max-w-md">
                 {location.pathname === '/signin'
                     ? 
                     <SignIn />
                     :
                     <SignUp />
                 }
-                
-            </section>
-        </>
+            </div>
+        </div>
     )
 }
 
