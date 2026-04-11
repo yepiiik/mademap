@@ -1,3 +1,4 @@
+import { auth } from '../config/firebase';
 import AuthModel from '../models/auth/AuthModel';
 
 export default class AuthController {
@@ -24,5 +25,9 @@ export default class AuthController {
 
     signOut = () => {
         return this.model.signOut();
-      };
+    };
+
+    getUserAuth = () => {
+        return auth.currentUser ? auth.currentUser : undefined
+    }
 }

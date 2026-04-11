@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./Auth";
 import SignOut from "./SignOut";
 import { auth } from "../../config/firebase";
+import HeaderNav from "../navigation/HeaderNav";
 
 const ProtectedRoute = ({ children }) => {
   const {currentUser} = useContext(AuthContext);
@@ -15,7 +16,6 @@ const ProtectedRoute = ({ children }) => {
 
   return (
     <>
-      <SignOut />
       {children}
     </>
   );

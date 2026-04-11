@@ -20,8 +20,9 @@ const App = () => {
     // <div className='App'>
     //   <NotActive />
     // </div>
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
+
         <div className="App"> 
           <Darkmode />
           <Routes>                                                                        
@@ -38,8 +39,8 @@ const App = () => {
             <Route path=":username" element={<ProfileView />} />
           </Routes>
         </div>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

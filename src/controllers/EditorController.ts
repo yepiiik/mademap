@@ -1,6 +1,7 @@
 import EditorModel from '../models/editor/EditorModel';
 import { auth } from '../config/firebase';
 import { isString } from 'lodash-es';
+import { $createParagraphNode, $getRoot, LexicalEditor } from 'lexical';
 
 
 function cleanForNoSQL(obj) {
@@ -65,7 +66,25 @@ export default class EditorController {
         const uid = auth.currentUser?.uid
         if (!uid) return
 
-        return this.model.createEmptyBlock(uid)
+        const blockContent = {
+            "root": {
+                "children": [
+                    {
+                        "children": [],
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                    }
+                ],
+                "format": "",
+                "indent": 0,
+                "type": "root",
+                "version": 1
+            }
+        }
+
+        return this.model.createBlock(cleanForNoSQL(blockContent), uid)
     }
 
     deleteBlock(blockId) {

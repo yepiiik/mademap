@@ -15,7 +15,7 @@ export default function DoubleEmptyParagraphPlugin({ onDoubleEmpty }) {
         const selection = $getSelection();
         const root = $getRoot();
 
-        if (root.getLastChild() == selection.anchor.getNode()) {
+        if (root.getLastChild() == selection.anchor.getNode() && root.getChildrenSize() >= 2) {
           console.log("We should delete now")
 
           // Trigger the callback to add a new editor

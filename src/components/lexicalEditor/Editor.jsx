@@ -5,6 +5,8 @@ import { $getRoot, $createRangeSelection, $setSelection, $createTextNode } from 
 import EditorInstance from './EditorInstance.jsx';
 import { editorController } from '../../config/base.js';
 
+import createInitialEditorState from './templates/EmptyEditor.js';
+
 
 function sortByCreatedAt(arr) {
   return arr.sort((a, b) => {
@@ -41,6 +43,8 @@ export default function Editor() {
     const doc = await editorController.createEmptyBlock()
     setEditors((prevEditors) => [...prevEditors, doc])
   };
+
+  
 
   // Function to log changes
   const logChanges = (editorState, blockId) => {

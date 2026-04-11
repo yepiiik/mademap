@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 function AuthView() {
     const {currentUser} = useContext(AuthContext);
     const location = useLocation();
-    console.dir(location)
+    // console.dir(location)
 
     return (
         <>

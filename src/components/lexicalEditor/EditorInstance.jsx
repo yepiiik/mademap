@@ -74,8 +74,8 @@ export default function EditorInstance({ index, onDoubleEmpty, onDelete, onMutat
         <span className="editor_info">ID: {index}</span>
         <span className="editor_info">Created at: {createdAt.toDate().toLocaleString()}</span>
       </span>
-      {/* <DoubleEmptyParagraphPlugin onDoubleEmpty={onDoubleEmpty} /> */}
-      <DeleteNewLinePlugin onDoubleEmpty={onDoubleEmpty} />
+      <DoubleEmptyParagraphPlugin onDoubleEmpty={onDoubleEmpty} />
+      <DeleteNewLinePlugin />
       <EmptyEditorBackspacePlugin index={index} onDelete={onDelete} />
       <LogChangesPlugin blockId={index} onMutation={onMutation}/>
       <RebuildFromJSONPlugin jsonContent={jsonContent} />

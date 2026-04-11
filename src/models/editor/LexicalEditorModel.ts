@@ -24,12 +24,12 @@ export default class LexicalEditorModel extends EditorModel {
 
         return true
     }
-    async createEmptyBlock(authorID: string) {
+    async createBlock(content: Object, authorID: string) {
         const collectionRef = collection(db, 'blocks'); // Replace with your actual collection name
         
         const data = {
             author: authorID,
-            content: Object(),
+            content: {...content},
             createdAt: Timestamp.now()
         }
 

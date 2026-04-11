@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../../config/firebase";
+import HeaderNav from "../navigation/HeaderNav";
 
 export const AuthContext = React.createContext();
 
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
         currentUser
       }}
     >
+      <HeaderNav />
       {children}
     </AuthContext.Provider>
   );

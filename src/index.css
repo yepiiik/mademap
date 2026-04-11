@@ -49,14 +49,16 @@ button {
   cursor: pointer;
 }
 
+#root {
+  min-height: 100vh;
+  position: relative;
+}
+
 .App {
   /* display: grid; */
   /* grid-template-columns: 1fr 2fr; */
-  position: absolute;
-  min-height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
+  /* position: absolute; */
+  min-height: max-content;
 }
 
 .editor-wrapper {
@@ -96,13 +98,15 @@ button {
 
 #main {
   grid-column: 1 / span 2;
-  height: 100vh;
+  /* height: 100vh; */
   overflow-y: auto;
   scroll-behavior: smooth;
+  padding-top: 70pt;
+
 }
 
 .darkmode_btn {
-  position: absolute;
+  position: fixed;
   bottom: 16pt;
   right: 16pt;
 }
@@ -198,12 +202,6 @@ button {
   align-items: center;
 }
 
-.signout_btn {
-  position: absolute;
-  top: 12pt;
-  left: 12pt;
-}
-
 .editor_info_block {
   display: inline-flex;
   column-gap: 12pt;
@@ -264,6 +262,84 @@ button {
   width: fit-content;
   height: fit-content;
   position: relative;
+}
+
+.header_nav {
+  position: relative;
+  width: fit-content;
+  z-index: 999;
+  position: fixed;
+  padding: 12pt;
+
+}
+
+.header_nav .dropdown_block.active {
+  height: auto;
+  width: auto;
+}
+
+.header_nav .open_btn.active {
+  transform: rotate(180deg);
+}
+
+.header_nav_preview {
+  display: flex;
+  column-gap: 12pt;
+  overflow: hidden;
+}
+
+.header_nav_preview img {
+  width: 32pt;
+  height: 32pt;
+  border-radius: 50%;
+  object-fit: fill;
+}
+
+.open_btn {
+  display: block;
+  width: 32pt;
+  height: 32pt;
+  position: relative;
+  border-radius: 50%;
+  border: var(--primary-border);
+  cursor: pointer;
+}
+
+.open_btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: 10pt;
+  border: ;
+  transform: translateY(1pt);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url(/src/assets/images/down-arrow-svgrepo-com.svg) no-repeat;
+  background-size: contain;
+}
+
+.dropdown_block {
+  border-radius: var(--primary-border-radius);
+  border: var(--primary-border);
+  background-color: var(--primary-background);
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  margin-top: 6pt;
+}
+
+.dropdown_list {
+  list-style: none;
+  margin: 12pt;
+  padding: 0;
+}
+
+.dropdown_item {
+  margin: 12pt 0;
 }
 
 @media screen and (max-width: 768pt) {
