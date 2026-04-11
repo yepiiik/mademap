@@ -70,6 +70,10 @@ button {
   padding: 0 6pt;
 }
 
+.editor-wrapper.is-separating {
+  /* No filter needed for this version */
+}
+
 .editor-container {
   margin: 0 auto;
   width: -webkit-fill-available;
@@ -82,6 +86,69 @@ button {
 
 .editor-input {
   outline: none;
+}
+
+.editor-container.new-block {
+  position: relative;
+  overflow: hidden;
+  animation: liquid-separate 0.45s ease-out forwards;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  border-color: rgba(136, 209, 255, 0.85);
+  filter: url(#gooey);
+}
+
+.editor-container.new-block::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 72%;
+  height: 24px;
+  background: rgba(255,255,255,0.14);
+  border-radius: 999px;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top center;
+  animation: liquid-neck 0.45s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes liquid-separate {
+  0% {
+    transform: translateY(-10px) scaleY(0.88) scaleX(0.95);
+    opacity: 0;
+    border-radius: 30px;
+  }
+  30% {
+    transform: translateY(-6px) scaleY(1.12) scaleX(0.93);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translateY(-2px) scaleY(0.98) scaleX(0.99);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(0) scaleY(1) scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes liquid-neck {
+  0% {
+    transform: translateX(-50%) scaleY(0);
+    opacity: 0;
+  }
+  45% {
+    transform: translateX(-50%) scaleY(1.12);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(-50%) scaleY(0.95);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(-50%) scaleY(0);
+    opacity: 0;
+  }
 }
 
 .main_sidebar {

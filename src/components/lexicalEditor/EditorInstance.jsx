@@ -22,6 +22,19 @@ import prepopulatedText from "./templates/SampleText";
 import DeleteNewLinePlugin from "./plugins/DeleteNewLinePlugin";
 import RebuildFromJSONPlugin from "./plugins/RebuildFromJSONPlugin";
 
+const formatCreatedAt = (createdAt) => {
+  if (!createdAt) return '';
+  if (createdAt instanceof Date) return createdAt.toLocaleString();
+  if (typeof createdAt.toDate === 'function') return createdAt.toDate().toLocaleString();
+  if (typeof createdAt.seconds === 'number') {
+    return new Date(createdAt.seconds * 1000 + (createdAt.nanoseconds || 0) / 1e6).toLocaleString();
+  }
+  if (typeof createdAt._seconds === 'number') {
+    return new Date(createdAt._seconds * 1000 + (createdAt._nanoseconds || 0) / 1e6).toLocaleString();
+  }
+  return new Date(createdAt).toLocaleString();
+};
+
 const editorConfig = {
     theme: ExampleTheme,
     // Handling of errors during update
@@ -45,7 +58,7 @@ const editorConfig = {
   };
 
 // Component that encapsulates the ContentEditable with its associated plugins
-export default function EditorInstance({ index, onDoubleEmpty, onDelete, onMutation, scrollToRef, jsonContent, createdAt }) {
+export default function EditorInstance({ index, onDoubleEmpty, onDelete, onMutation, scrollToRef, markdownContent, createdAt, isNew }) {
   const localConfig = {
     ...editorConfig,
     namespace: `MyEditor-${index}`, // Ensure unique namespaces for each editor
@@ -57,7 +70,7 @@ export default function EditorInstance({ index, onDoubleEmpty, onDelete, onMutat
 
   return (
     <LexicalComposer initialConfig={localConfig} >
-      <div key={index} className={`editor-container`} editor-instance={index} ref={scrollToRef}>
+      <div key={index} className={`editor-container${isNew ? ' new-block' : ''}`} editor-instance={index} ref={scrollToRef}>
         <RichTextPlugin
           contentEditable={<ContentEditable className={`editor-input`} />}
         //   placeholder={<div>Editor {index + 1}...</div>}
@@ -72,13 +85,13 @@ export default function EditorInstance({ index, onDoubleEmpty, onDelete, onMutat
       </div>
       <span className="editor_info_block">
         <span className="editor_info">ID: {index}</span>
-        <span className="editor_info">Created at: {createdAt.toDate().toLocaleString()}</span>
+        <span className="editor_info">Created at: {formatCreatedAt(createdAt)}</span>
       </span>
       <DoubleEmptyParagraphPlugin onDoubleEmpty={onDoubleEmpty} />
       <DeleteNewLinePlugin />
       <EmptyEditorBackspacePlugin index={index} onDelete={onDelete} />
       <LogChangesPlugin blockId={index} onMutation={onMutation}/>
-      <RebuildFromJSONPlugin jsonContent={jsonContent} />
+      <RebuildFromJSONPlugin markdownContent={markdownContent} />
     </LexicalComposer>
   );
 }

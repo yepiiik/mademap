@@ -1,58 +1,93 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import { $getRoot, $createRangeSelection, $setSelection, $createTextNode } from 'lexical';
 
 import EditorInstance from './EditorInstance.jsx';
 import { editorController } from '../../config/base.js';
+import { AuthContext } from '../authentication/Auth';
+import { auth } from '../../config/firebase';
 
-import createInitialEditorState from './templates/EmptyEditor.js';
-
+function parseCreatedAtValue(value) {
+  if (!value) return new Date(0);
+  if (value instanceof Date) return value;
+  if (typeof value.toDate === 'function') return value.toDate();
+  if (typeof value.seconds === 'number') {
+    return new Date(value.seconds * 1000 + (value.nanoseconds || 0) / 1e6);
+  }
+  if (typeof value._seconds === 'number') {
+    return new Date(value._seconds * 1000 + (value._nanoseconds || 0) / 1e6);
+  }
+  return new Date(value);
+}
 
 function sortByCreatedAt(arr) {
   return arr.sort((a, b) => {
-      const dateA = a.createdAt instanceof Date ? a.createdAt : a.createdAt.toDate();
-      const dateB = b.createdAt instanceof Date ? b.createdAt : b.createdAt.toDate();
-      return dateA - dateB; // Descending order (latest to earliest)
+      const dateA = parseCreatedAtValue(a?.createdAt);
+      const dateB = parseCreatedAtValue(b?.createdAt);
+      return dateA - dateB; // Ascending order oldest to newest
   });
 }
 
 export default function Editor() {
+  const { currentUser } = useContext(AuthContext);
   const [editors, setEditors] = useState([]);
+  const [focusBlockId, setFocusBlockId] = useState(null);
+  const [newBlockId, setNewBlockId] = useState(null);
   const lastEditorRef = useRef(null);
   
   useEffect(() => {
-    editorController.getBlocks().then((docs) => {
-      // console.log(docs)
-      // setEditors([...docs])
+    const activeUser = currentUser ?? auth.currentUser;
+    if (!activeUser) return;
 
-      const sortedDocs = sortByCreatedAt(docs)
-      console.log(sortedDocs)
+    const fetchBlocks = async () => {
+      try {
+        const docs = await editorController.getBlocks() ?? [];
+        const sortedDocs = Array.isArray(docs) ? sortByCreatedAt(docs) : [];
+        console.log('Editor fetched blocks', activeUser.uid, docs.length, sortedDocs.length);
 
-      if (docs.length == 0) {
-        addNewEditor()
-        return
+        if (!sortedDocs.length) {
+          await addNewEditor();
+        } else {
+          setEditors(sortedDocs);
+        }
+      } catch (error) {
+        console.error('Failed to load editor blocks:', error);
+        await addNewEditor();
       }
+    };
 
-      setEditors([...sortedDocs])
-      
-    })
-  }, [])
+    fetchBlocks();
+  }, [currentUser])
 
+  const addNewEditor = async (initialContent = '') => {
+    const doc = await editorController.createEmptyBlock(initialContent);
 
-  const addNewEditor = async () => {
-    const doc = await editorController.createEmptyBlock()
-    setEditors((prevEditors) => [...prevEditors, doc])
+    if (doc && doc.id) {
+      setEditors((prevEditors) => [...prevEditors, doc]);
+      setFocusBlockId(doc.id);
+      setNewBlockId(doc.id);
+      return;
+    }
+
+    const localId = `local-${Date.now()}`;
+    setEditors((prevEditors) => [
+      ...prevEditors,
+      {
+        id: localId,
+        content: initialContent ?? '',
+        createdAt: new Date(),
+      },
+    ]);
+    setFocusBlockId(localId);
+    setNewBlockId(localId);
   };
 
   
 
   // Function to log changes
-  const logChanges = (editorState, blockId) => {
-      const content = JSON.stringify(editorState.toJSON(), null, 2); // Pretty-print JSON
-
-      console.log('Detected editor change:');
-      // console.dir(editorState)
-      editorController.updateBlock(blockId, editorState.toJSON())
+  const logChanges = (markdownContent, blockId) => {
+      console.log('Detected editor change:', blockId);
+      editorController.updateBlock(blockId, markdownContent ?? '');
   };
 
   const deleteEditor = (indexToRemove) => {
@@ -125,12 +160,39 @@ export default function Editor() {
   };
 
   useEffect(() => {
-    // console.log(editors)
     if (lastEditorRef.current) {
       lastEditorRef.current.scrollIntoView({block: 'center'});
-      console.dir(lastEditorRef)
     }
   }, [editors]);
+
+  useEffect(() => {
+    if (!focusBlockId) {
+      return;
+    }
+
+    const focusTimeout = setTimeout(() => {
+      const block = document.querySelector(`[editor-instance="${focusBlockId}"]`);
+      const input = block?.querySelector('.editor-input');
+      if (input) {
+        input.focus();
+      }
+      setFocusBlockId(null);
+    }, 0);
+
+    return () => clearTimeout(focusTimeout);
+  }, [editors, focusBlockId]);
+
+  useEffect(() => {
+    if (!newBlockId) {
+      return;
+    }
+
+    const animationTimeout = setTimeout(() => {
+      setNewBlockId(null);
+    }, 350);
+
+    return () => clearTimeout(animationTimeout);
+  }, [newBlockId]);
 
 
   return (
@@ -139,12 +201,13 @@ export default function Editor() {
         <EditorInstance
           key={block.id}
           index={block.id}
+          isNew={block.id === newBlockId}
           onDoubleEmpty={addNewEditor}
           onDelete={deleteEditor}
           onMutation={logChanges}
           scrollToRef={block.id === editors.length - 1 ? lastEditorRef : null}
-          jsonContent={block.content}
-          createdAt={block.createdAt}
+          markdownContent={typeof block.content === 'string' ? block.content : ''}
+          createdAt={block.createdAt ?? new Date()}
         />
       ))}
     </div>

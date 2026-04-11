@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^powershell -NoProfile -Command \"Get-ChildItem -Path \\.\\\\node_modules\\\\@lexical\\\\markdown -Name\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

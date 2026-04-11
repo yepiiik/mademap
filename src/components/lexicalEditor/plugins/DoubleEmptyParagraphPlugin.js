@@ -1,70 +1,48 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot, $getSelection, $isRangeSelection, COMMAND_PRIORITY_LOW, KEY_ENTER_COMMAND } from 'lexical';
+import { $getRoot, $createParagraphNode } from 'lexical';
+import { $convertToMarkdownString, $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown';
 
-
-// Plugin to detect two consecutive empty paragraphs
 export default function DoubleEmptyParagraphPlugin({ onDoubleEmpty }) {
   const [editor] = useLexicalComposerContext();
+  const splitTriggeredRef = useRef(false);
 
   useEffect(() => {
-    const removeEnterListener = editor.registerCommand(
-      KEY_ENTER_COMMAND,
-      async () => {
-        // Get the current selection
-        const selection = $getSelection();
-        const root = $getRoot();
+    const unregister = editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const markdown = $convertToMarkdownString(TRANSFORMERS);
+        const h1Matches = [...markdown.matchAll(/^#\s.*$/gm)];
 
-        if (root.getLastChild() == selection.anchor.getNode() && root.getChildrenSize() >= 2) {
-          console.log("We should delete now")
+        if (h1Matches.length > 1 && !splitTriggeredRef.current) {
+          splitTriggeredRef.current = true;
+          const secondHeadingIndex = h1Matches[1].index ?? 0;
+          const beforeMarkdown = markdown.slice(0, secondHeadingIndex).trimEnd();
+          const afterMarkdown = markdown.slice(secondHeadingIndex).trimStart();
 
-          // Trigger the callback to add a new editor
-          await onDoubleEmpty();
-
-          // Remove the last two paragraphs
-          for (let j = 1; j <= 2; j++) {
+          setTimeout(() => {
             editor.update(() => {
-                const childToRemove = root.getLastChild();
+              const root = $getRoot();
+              root.clear();
 
-                // Remobe last paragraph node
-                if (childToRemove) {
-                    childToRemove.remove();
-                }
+              if (beforeMarkdown.length > 0) {
+                $convertFromMarkdownString(beforeMarkdown, TRANSFORMERS);
+              } else {
+                root.append($createParagraphNode());
+              }
             });
-          }
 
-          
-        } 
+            onDoubleEmpty(afterMarkdown);
+          }, 0);
+        }
 
-        // // Ensure the selection is a range selection (i.e., not node or grid selection)
-        // if ($isRangeSelection(selection)) {
-        //   // Get the anchor node (the node where the cursor is located)
-        //   const anchorNode = selection.anchor.getNode();
-          
-        //   // If it's inside a paragraph node, we can check its content
-        //   if (anchorNode.getParent()) {
-        //     const parentNode = anchorNode.getParent();
-
-        //     if (parentNode.getType() === 'paragraph') {
-        //       const paragraphText = parentNode.getTextContent().trim();
-
-        //       if (paragraphText === '') {
-        //         // Handle logic for an empty paragraph node
-        //         console.log('Empty paragraph node detected:', parentNode);
-                
-        //         // You can now perform actions, like checking consecutive paragraphs
-        //         // and calling the onDoubleEmpty callback if needed
-        //       }
-        //     }
-        //   }
-        // }
-        return false; // Returning false allows other listeners to run
-      },
-      COMMAND_PRIORITY_LOW
-    );
+        if (h1Matches.length <= 1) {
+          splitTriggeredRef.current = false;
+        }
+      });
+    });
 
     return () => {
-      removeEnterListener();
+      unregister();
     };
   }, [editor, onDoubleEmpty]);
 

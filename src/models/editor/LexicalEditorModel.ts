@@ -24,12 +24,12 @@ export default class LexicalEditorModel extends EditorModel {
 
         return true
     }
-    async createBlock(content: Object, authorID: string) {
+    async createBlock(content: string, authorID: string) {
         const collectionRef = collection(db, 'blocks'); // Replace with your actual collection name
         
         const data = {
             author: authorID,
-            content: {...content},
+            content,
             createdAt: Timestamp.now()
         }
 
@@ -57,7 +57,7 @@ export default class LexicalEditorModel extends EditorModel {
         // console.log(docsArray);
         return docsArray;
     }
-    async updateContent(blockId: string, content: Object, authorID: string) {
+    async updateContent(blockId: string, content: string, authorID: string) {
         const docRef = doc(db, 'blocks', blockId);
         const collectionRef = collection(db, 'blocks')
 
@@ -68,7 +68,7 @@ export default class LexicalEditorModel extends EditorModel {
             // If no document found, insert a new document
             await addDoc(collectionRef, {
                 author: authorID,
-                content: Object(content)
+                content
             });
             console.log(`New document inserted for author ${authorID}`);
         } else {

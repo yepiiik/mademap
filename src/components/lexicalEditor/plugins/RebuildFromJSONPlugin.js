@@ -1,40 +1,24 @@
 import React from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createParagraphNode, $getRoot } from 'lexical';
+import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown';
 
-function RebuildFromJSONPlugin({ jsonContent }) {
+function RebuildFromJSONPlugin({ markdownContent }) {
     const [editor] = useLexicalComposerContext();
 
-    const buildRawEditorState = () => {
+    React.useEffect(() => {
         editor.update(() => {
             const root = $getRoot();
-            root.clear(); // Clear all nodes
-            const paragraphNode = $createParagraphNode();
-            root.append(paragraphNode);
-        })
-    }
+            root.clear();
 
-    // Function to rebuild editor state from JSON
-    const rebuildEditorState = () => {
-        if (Object.keys(jsonContent).length === 0) {
-            buildRawEditorState()
-        } else {
-            // Parse JSON content and build the Lexical state
-            const editorState = editor.parseEditorState(jsonContent);
-            console.log(editor, editorState.isEmpty())
-
-            if (editorState.isEmpty()) buildRawEditorState()
-            else editor.setEditorState(editorState);
-            
-        }
-    }
-
-    // Call the function to rebuild the editor state
-    React.useEffect(() => {
-        if (jsonContent) {
-            rebuildEditorState();
-        }
-    }, [jsonContent]);
+            if (typeof markdownContent === 'string' && markdownContent.trim().length > 0) {
+                $convertFromMarkdownString(markdownContent, TRANSFORMERS);
+            } else {
+                const paragraphNode = $createParagraphNode();
+                root.append(paragraphNode);
+            }
+        });
+    }, [editor, markdownContent]);
 
     return null;
 }

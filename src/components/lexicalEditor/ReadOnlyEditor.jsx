@@ -7,11 +7,24 @@ import ReadOnlyEditorInstance from './ReadOnlyEditorInstance.jsx';
 
 
 
+function parseCreatedAtValue(value) {
+  if (!value) return new Date(0);
+  if (value instanceof Date) return value;
+  if (typeof value.toDate === 'function') return value.toDate();
+  if (typeof value.seconds === 'number') {
+    return new Date(value.seconds * 1000 + (value.nanoseconds || 0) / 1e6);
+  }
+  if (typeof value._seconds === 'number') {
+    return new Date(value._seconds * 1000 + (value._nanoseconds || 0) / 1e6);
+  }
+  return new Date(value);
+}
+
 function sortByCreatedAt(arr) {
   return arr.sort((a, b) => {
-      const dateA = a.createdAt instanceof Date ? a.createdAt : a.createdAt.toDate();
-      const dateB = b.createdAt instanceof Date ? b.createdAt : b.createdAt.toDate();
-      return dateA - dateB; // Descending order (latest to earliest)
+      const dateA = parseCreatedAtValue(a?.createdAt);
+      const dateB = parseCreatedAtValue(b?.createdAt);
+      return dateA - dateB; // Ascending order oldest to newest
   });
 }
 
@@ -36,7 +49,7 @@ export default function ReadOnlyEditor() {
         <ReadOnlyEditorInstance
           key={block.id}
           index={block.id}
-          jsonContent={block.content}
+          markdownContent={typeof block.content === 'string' ? block.content : ''}
           createdAt={block.createdAt}
         />
       ))}

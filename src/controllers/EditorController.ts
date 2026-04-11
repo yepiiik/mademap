@@ -1,11 +1,9 @@
 import EditorModel from '../models/editor/EditorModel';
 import { auth } from '../config/firebase';
-import { isString } from 'lodash-es';
-import { $createParagraphNode, $getRoot, LexicalEditor } from 'lexical';
 
 
-function cleanForNoSQL(obj) {
-    const cleanedObj = {};
+function cleanForNoSQL(obj: any) {
+    const cleanedObj: Record<string, any> = {};
 
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -44,50 +42,34 @@ export default class EditorController {
         this.model = model;
     }
 
-    updateBlock(blockId: string, content: Object) {
+    updateBlock(blockId: string, content: string) {
         const uid = auth.currentUser?.uid
         if (!uid) return
-        if (!content) return
+        if (content === undefined || content === null) return
         if (!blockId) return
 
-        const clearContent = cleanForNoSQL(content)
-
-        this.model.updateContent(blockId, clearContent, uid);
+        this.model.updateContent(blockId, content, uid);
     }
 
-    getBlocks() {
+    async getBlocks() {
         const uid = auth.currentUser?.uid
-        if (!uid) return
+        if (!uid) {
+            return []
+        }
 
         return this.model.getBlocks(uid)
     }
 
-    createEmptyBlock() {
+    async createEmptyBlock(content = '') {
         const uid = auth.currentUser?.uid
-        if (!uid) return
-
-        const blockContent = {
-            "root": {
-                "children": [
-                    {
-                        "children": [],
-                        "format": "",
-                        "indent": 0,
-                        "type": "paragraph",
-                        "version": 1
-                    }
-                ],
-                "format": "",
-                "indent": 0,
-                "type": "root",
-                "version": 1
-            }
+        if (!uid) {
+            return null
         }
 
-        return this.model.createBlock(cleanForNoSQL(blockContent), uid)
+        return this.model.createBlock(content, uid)
     }
 
-    deleteBlock(blockId) {
+    deleteBlock(blockId: string) {
         const uid = auth.currentUser?.uid
         if (!uid) return
         if (!blockId) return
